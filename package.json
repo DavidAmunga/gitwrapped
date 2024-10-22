@@ -1,0 +1,33 @@
+{
+  "name": "gitwrapped",
+  "version": "1.0.0",
+  "description": "A CLI tool to fetch high-level stats from a local Git repository.",
+  "type": "module",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "David Amunga",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^5.3.0"
+  },
+  "bin": {
+    "gitwrapped": "./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavidAmunga/gitwrapped.git"
+  },
+  "keywords": [
+    "git",
+    "cli",
+    "statistics",
+    "git-stats",
+    "repository-analysis",
+    "version-control",
+    "developer-tools",
+    "gitwrapped",
+    "commit-analysis",
+    "git-branches"
+  ]
+}
