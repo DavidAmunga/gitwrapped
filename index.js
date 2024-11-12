@@ -149,6 +149,8 @@ function getCommitFrequencyStats() {
     { date: "", count: 0 }
   );
 
+  const numCommits = execCommand("git rev-list --count HEAD");
+
   // Calculate averages
   const totalMonths = Object.keys(monthStats).length;
   const totalDays = Object.keys(dayStats).length;
