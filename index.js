@@ -114,6 +114,37 @@ function getContributorStats() {
 
   return contributorStats;
 }
+function getTimeBasedStats() {
+  const commitTimes = execCommand('git log --format="%H|%ai"')
+    .split("\n")
+    .map((line) => {
+      const [hash, dateStr] = line.split("|");
+      return new Date(dateStr);
+    });
+
+  // Group commits by hour of day
+  const hourlyCommits = commitTimes.reduce((acc, date) => {
+    const hour = date.getHours();
+    acc[hour] = (acc[hour] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Find most active hour
+  const mostActiveHour = Object.entries(hourlyCommits).reduce(
+    (max, [hour, count]) =>
+      count > max.count ? { hour: parseInt(hour), count } : max,
+    { hour: 0, count: 0 }
+  );
+
+  // Group commits by day of week
+  const weekdayCommits = commitTimes.reduce((acc, date) => {
+    const weekday = date.toLocaleDateString("en-US", { weekday: "long" });
+    acc[weekday] = (acc[weekday] || 0) + 1;
+    return acc;
+  }, {});
+
+  return { mostActiveHour, weekdayCommits };
+}
 
 function getCommitFrequencyStats() {
   // Get commits by date
@@ -135,20 +166,42 @@ function getCommitFrequencyStats() {
 
   // Find max values
   const maxDay = Object.entries(dayStats).reduce(
-    (max, [date, count]) => (count > max.count ? { date, count } : max),
+    (max, [date, count]) =>
+      count > max.count ? { date: formatDate(date), count } : max,
     { date: "", count: 0 }
   );
 
   const maxMonth = Object.entries(monthStats).reduce(
-    (max, [date, count]) => (count > max.count ? { date, count } : max),
+    (max, [date, count]) => {
+      // Add day to make it a valid date string (using first of the month)
+      const fullDate = `${date}-01`;
+      return count > max.count
+        ? {
+            date: formatDate(fullDate).split(",")[1].trim(), // Remove day of week and only keep month, year
+            count,
+          }
+        : max;
+    },
     { date: "", count: 0 }
   );
 
   const maxYear = Object.entries(yearStats).reduce(
-    (max, [date, count]) => (count > max.count ? { date, count } : max),
+    (max, [date, count]) => {
+      // Add month and day to make it a valid date string
+      const fullDate = `${date}-01-01`;
+      return count > max.count
+        ? {
+            date: formatDate(fullDate)
+              .split(",")[1]
+              .trim()
+              .split(",")[1]
+              .trim(), // Only keep year
+            count,
+          }
+        : max;
+    },
     { date: "", count: 0 }
   );
-
   const numCommits = execCommand("git rev-list --count HEAD");
 
   // Calculate averages
@@ -164,6 +217,39 @@ function getCommitFrequencyStats() {
     avgCommitsPerMonth,
     avgCommitsPerDay,
   };
+}
+
+function getCommitSizeStats() {
+  // Get average commit size
+  const commitSizes = execCommand("git log --stat --oneline")
+    .split("\n")
+    .filter((line) => line.includes("files changed"))
+    .map((line) => {
+      const matches = line.match(
+        /(\d+) files? changed(?:, (\d+) insertions?\\(\\+\\))?(?:, (\d+) deletions?\\(-\\))?/
+      );
+      if (matches) {
+        return {
+          filesChanged: parseInt(matches[1] || 0),
+          insertions: parseInt(matches[2] || 0),
+          deletions: parseInt(matches[3] || 0),
+        };
+      }
+      return null;
+    })
+    .filter(Boolean);
+
+  const avgFilesChanged = (
+    commitSizes.reduce((sum, c) => sum + c.filesChanged, 0) / commitSizes.length
+  ).toFixed(2);
+  const avgInsertions = (
+    commitSizes.reduce((sum, c) => sum + c.insertions, 0) / commitSizes.length
+  ).toFixed(2);
+  const avgDeletions = (
+    commitSizes.reduce((sum, c) => sum + c.deletions, 0) / commitSizes.length
+  ).toFixed(2);
+
+  return { avgFilesChanged, avgInsertions, avgDeletions };
 }
 
 function getGitWrapped() {
@@ -224,12 +310,26 @@ function getGitWrapped() {
 
   const contributorStats = getContributorStats();
   const frequencyStats = getCommitFrequencyStats();
+  const timeStats = getTimeBasedStats();
+  const commitSizeStats = getCommitSizeStats();
 
   console.log("\n📊 Contributor Statistics:");
   console.log("..............................");
   contributorStats.forEach(({ name, commits }) => {
     console.log(chalk.white(`${name}: ${commits} commits`));
   });
+
+  console.log("\n📏 Average Commit Size:");
+  console.log("..............................");
+  console.log(
+    chalk.white(`Files Changed per Commit: ${commitSizeStats.avgFilesChanged}`)
+  );
+  console.log(
+    chalk.white(`Lines Added per Commit: ${commitSizeStats.avgInsertions}`)
+  );
+  console.log(
+    chalk.white(`Lines Deleted per Commit: ${commitSizeStats.avgDeletions}`)
+  );
 
   console.log("\n📈 Commit Frequency Analysis:");
   console.log("..............................");
@@ -256,6 +356,21 @@ function getGitWrapped() {
   console.log(
     chalk.white(`Average Commits per Day: ${frequencyStats.avgCommitsPerDay}`)
   );
+  console.log("..............................");
+  console.log("\n⏰ Time-Based Analysis:");
+  console.log("..............................");
+  console.log(
+    chalk.white(
+      `Most Active Hour: ${timeStats.mostActiveHour.hour}:00 (${timeStats.mostActiveHour.count} commits)`
+    )
+  );
+  console.log("\nCommits by Day of Week:");
+  Object.entries(timeStats.weekdayCommits)
+    .sort(([, a], [, b]) => b - a)
+    .forEach(([day, count]) => {
+      console.log(chalk.white(`  ${day}: ${count} commits`));
+    });
+
   console.log("..............................");
 }
 
