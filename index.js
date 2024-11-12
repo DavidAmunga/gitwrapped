@@ -102,6 +102,68 @@ function getCommitDetails(commitHash) {
   return output;
 }
 
+function getContributorStats() {
+  // Get detailed contributor statistics
+  const contributorStats = execCommand("git shortlog -sn --all")
+    .split("\n")
+    .filter((line) => line.trim())
+    .map((line) => {
+      const [commits, name] = line.trim().split("\t");
+      return { name, commits: parseInt(commits) };
+    });
+
+  return contributorStats;
+}
+
+function getCommitFrequencyStats() {
+  // Get commits by date
+  const commitDates = execCommand('git log --format="%ai"').split("\n");
+
+  const dayStats = {};
+  const monthStats = {};
+  const yearStats = {};
+
+  commitDates.forEach((date) => {
+    if (!date) return;
+    const [fullDate] = date.split(" ");
+    const [year, month, day] = fullDate.split("-");
+
+    dayStats[fullDate] = (dayStats[fullDate] || 0) + 1;
+    monthStats[`${year}-${month}`] = (monthStats[`${year}-${month}`] || 0) + 1;
+    yearStats[year] = (yearStats[year] || 0) + 1;
+  });
+
+  // Find max values
+  const maxDay = Object.entries(dayStats).reduce(
+    (max, [date, count]) => (count > max.count ? { date, count } : max),
+    { date: "", count: 0 }
+  );
+
+  const maxMonth = Object.entries(monthStats).reduce(
+    (max, [date, count]) => (count > max.count ? { date, count } : max),
+    { date: "", count: 0 }
+  );
+
+  const maxYear = Object.entries(yearStats).reduce(
+    (max, [date, count]) => (count > max.count ? { date, count } : max),
+    { date: "", count: 0 }
+  );
+
+  // Calculate averages
+  const totalMonths = Object.keys(monthStats).length;
+  const totalDays = Object.keys(dayStats).length;
+  const avgCommitsPerMonth = (parseInt(numCommits) / totalMonths).toFixed(2);
+  const avgCommitsPerDay = (parseInt(numCommits) / totalDays).toFixed(2);
+
+  return {
+    maxDay,
+    maxMonth,
+    maxYear,
+    avgCommitsPerMonth,
+    avgCommitsPerDay,
+  };
+}
+
 function getGitWrapped() {
   // Get first commit
   const firstCommitHash = execCommand("git rev-list --max-parents=0 HEAD");
@@ -153,6 +215,44 @@ function getGitWrapped() {
         endDate
       )}`
     )
+  );
+  console.log("..............................");
+
+  // Get additional statistics
+
+  const contributorStats = getContributorStats();
+  const frequencyStats = getCommitFrequencyStats();
+
+  console.log("\n📊 Contributor Statistics:");
+  console.log("..............................");
+  contributorStats.forEach(({ name, commits }) => {
+    console.log(chalk.white(`${name}: ${commits} commits`));
+  });
+
+  console.log("\n📈 Commit Frequency Analysis:");
+  console.log("..............................");
+  console.log(
+    chalk.white(
+      `Most Active Day: ${frequencyStats.maxDay.date} (${frequencyStats.maxDay.count} commits)`
+    )
+  );
+  console.log(
+    chalk.white(
+      `Most Active Month: ${frequencyStats.maxMonth.date} (${frequencyStats.maxMonth.count} commits)`
+    )
+  );
+  console.log(
+    chalk.white(
+      `Most Active Year: ${frequencyStats.maxYear.date} (${frequencyStats.maxYear.count} commits)`
+    )
+  );
+  console.log(
+    chalk.white(
+      `Average Commits per Month: ${frequencyStats.avgCommitsPerMonth}`
+    )
+  );
+  console.log(
+    chalk.white(`Average Commits per Day: ${frequencyStats.avgCommitsPerDay}`)
   );
   console.log("..............................");
 }
