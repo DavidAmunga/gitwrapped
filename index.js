@@ -102,6 +102,35 @@ function getCommitDetails(commitHash) {
   return output;
 }
 
+function getLineStats() {
+  // Get total LOC across all files
+  const totalLOC = execCommand(
+    "git ls-files | xargs wc -l 2>/dev/null | tail -n 1 | awk '{print $1}'"
+  );
+
+  // Get LOC for each file and sort to find the largest
+  const fileStats = execCommand("git ls-files | xargs wc -l 2>/dev/null")
+    .split("\n")
+    .filter((line) => line.trim())
+    .map((line) => {
+      const match = line.trim().match(/(\d+)\s+(.+)/);
+      if (match) {
+        return {
+          lines: parseInt(match[1]),
+          file: match[2],
+        };
+      }
+      return null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.lines - a.lines);
+
+  // Get top 10 largest files
+  const largestFiles = fileStats.slice(0, 10);
+
+  return { totalLOC, largestFiles };
+}
+
 function getContributorStats() {
   // Get detailed contributor statistics
   const contributorStats = execCommand("git shortlog -sn --all")
@@ -188,14 +217,10 @@ function getCommitFrequencyStats() {
   const maxYear = Object.entries(yearStats).reduce(
     (max, [date, count]) => {
       // Add month and day to make it a valid date string
-      const fullDate = `${date}-01-01`;
+
       return count > max.count
         ? {
-            date: formatDate(fullDate)
-              .split(",")[1]
-              .trim()
-              .split(",")[1]
-              .trim(), // Only keep year
+            date, // Only keep year
             count,
           }
         : max;
@@ -311,7 +336,7 @@ function getGitWrapped() {
   const contributorStats = getContributorStats();
   const frequencyStats = getCommitFrequencyStats();
   const timeStats = getTimeBasedStats();
-  const commitSizeStats = getCommitSizeStats();
+  const lineStats = getLineStats();
 
   console.log("\n📊 Contributor Statistics:");
   console.log("..............................");
@@ -319,17 +344,17 @@ function getGitWrapped() {
     console.log(chalk.white(`${name}: ${commits} commits`));
   });
 
-  console.log("\n📏 Average Commit Size:");
+  console.log("\n📊 Code Size Statistics:");
   console.log("..............................");
   console.log(
-    chalk.white(`Files Changed per Commit: ${commitSizeStats.avgFilesChanged}`)
+    chalk.white(`Total Lines of Code: ${lineStats.totalLOC.toLocaleString()}`)
   );
-  console.log(
-    chalk.white(`Lines Added per Commit: ${commitSizeStats.avgInsertions}`)
-  );
-  console.log(
-    chalk.white(`Lines Deleted per Commit: ${commitSizeStats.avgDeletions}`)
-  );
+
+  console.log("\n📝 Largest Files by Line Count:");
+  console.log("..............................");
+  lineStats.largestFiles.forEach(({ file, lines }) => {
+    console.log(chalk.white(`${file}: ${lines.toLocaleString()} lines`));
+  });
 
   console.log("\n📈 Commit Frequency Analysis:");
   console.log("..............................");
@@ -368,7 +393,7 @@ function getGitWrapped() {
   Object.entries(timeStats.weekdayCommits)
     .sort(([, a], [, b]) => b - a)
     .forEach(([day, count]) => {
-      console.log(chalk.white(`  ${day}: ${count} commits`));
+      console.log(chalk.white(`${day}: ${count} commits`));
     });
 
   console.log("..............................");
