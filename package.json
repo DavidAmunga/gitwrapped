@@ -1,7 +1,7 @@
 {
   "name": "gitwrapped",
-  "version": "1.0.4",
-  "description": "A CLI tool to fetch high-level stats from a local Git repository.",
+  "version": "2.0.1",
+  "description": "Your repository's year in review - a beautiful CLI tool to visualize your Git statistics with comprehensive insights, streaks, and achievements.",
   "type": "module",
   "scripts": {
     "test": "node index.js"
@@ -9,7 +9,13 @@
   "author": "David Amunga",
   "license": "MIT",
   "dependencies": {
-    "chalk": "^5.3.0"
+    "chalk": "^5.3.0",
+    "cli-progress": "^3.12.0",
+    "asciichart": "^1.5.25",
+    "boxen": "^7.1.1",
+    "gradient-string": "^2.0.2",
+    "ora": "^8.0.1",
+    "commander": "^12.0.0"
   },
   "bin": {
     "gitwrapped": "./index.js"
@@ -28,6 +34,15 @@
     "developer-tools",
     "gitwrapped",
     "commit-analysis",
-    "git-branches"
+    "git-branches",
+    "git-wrapped",
+    "commit-streaks",
+    "code-statistics",
+    "contributor-stats",
+    "git-insights",
+    "git-visualization",
+    "spotify-wrapped",
+    "year-in-review",
+    "coding-stats"
   ]
 }
