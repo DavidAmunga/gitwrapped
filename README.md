@@ -161,34 +161,20 @@ Get a quick overview without all the details.
 
 ## 📊 Sample Output
 
-```
-    ▄▄▄▄    ▄▄▄▄▄▄   ▄▄▄▄▄▄▄▄ ▄▄      ▄▄ ▄▄▄▄▄▄       ▄▄     ▄▄▄▄▄▄    ▄▄▄▄▄▄    ▄▄▄▄▄▄▄▄  ▄▄▄▄▄
-  ██▀▀▀▀█   ▀▀██▀▀   ▀▀▀██▀▀▀ ██      ██ ██▀▀▀▀██    ████    ██▀▀▀▀█▄  ██▀▀▀▀█▄  ██▀▀▀▀▀▀  ██▀▀▀██
- ██           ██        ██    ▀█▄ ██ ▄█▀ ██    ██    ████    ██    ██  ██    ██  ██        ██    ██
- ██  ▄▄▄▄     ██        ██     ██ ██ ██  ███████    ██  ██   ██████▀   ██████▀   ███████   ██    ██
- ██  ▀▀██     ██        ██     ███▀▀███  ██  ▀██▄   ██████   ██        ██        ██        ██    ██
-  ██▄▄▄██   ▄▄██▄▄      ██     ███  ███  ██    ██  ▄██  ██▄  ██        ██        ██▄▄▄▄▄▄  ██▄▄▄██
-    ▀▀▀▀    ▀▀▀▀▀▀      ▀▀     ▀▀▀  ▀▀▀  ▀▀    ▀▀▀ ▀▀    ▀▀  ▀▀        ▀▀        ▀▀▀▀▀▀▀▀  ▀▀▀▀▀
+See the beautiful output in action! Git Wrapped provides a comprehensive, color-coded visualization of your repository statistics:
 
-                         📊 Your Repository's Year in Review 📊
-                                  Repository: my-project
+![Git Wrapped Output](screenshots/product.png)
 
-✓ REPOSITORY OVERVIEW
-────────────────────────────────────────────────────────────
-📊 Total Commits       270
-🌿 Branches            12
-📩 Pull Requests       45
-👥 Contributors        8
-🎂 Repository Age      2 years, 3 months
-
-📅 TIMELINE
-────────────────────────────────────────────────────────────
-🚀 First Commit: Monday, January 15, 2023 at 09:30:00 AM
-🏁 Last Commit:  Friday, December 20, 2024 at 04:15:00 PM
-⏳ Duration:     2 years, 3 months
-
-... (more sections)
-```
+The output includes:
+- 🎨 Stunning ASCII art banner with gradient colors
+- 📊 Repository overview with key metrics
+- 📅 Timeline of your project's history
+- 👥 Contributor leaderboard
+- 💻 Code statistics and language breakdown
+- 📈 Commit frequency analysis
+- ⏰ Time-based insights (most active hours, days)
+- 🔥 Commit streaks and achievements
+- 🎉 Fun facts about your coding patterns
 
 ## 🛠️ Requirements
 
