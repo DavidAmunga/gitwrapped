@@ -1,7 +1,7 @@
 {
   "name": "gitwrapped",
-  "version": "2.0.1",
-  "description": "Your repository's year in review - a beautiful CLI tool to visualize your Git statistics with comprehensive insights, streaks, and achievements.",
+  "version": "2.1.0",
+  "description": "Your repository's stats - a beautiful CLI tool to visualize your Git statistics with comprehensive insights, branch analytics, streaks, and achievements.",
   "type": "module",
   "scripts": {
     "test": "node index.js"
@@ -18,7 +18,7 @@
     "commander": "^12.0.0"
   },
   "bin": {
-    "gitwrapped": "./index.js"
+    "gitwrapped": "index.js"
   },
   "repository": {
     "type": "git",

@@ -1,6 +1,6 @@
-# 🎉 Git Wrapped
+# gitwrapped
 
-Your repository's year in review - a beautiful CLI tool to visualize your Git statistics!
+Your repository's stats - a beautiful CLI tool to visualize your Git statistics!
 
 <div align="center">
 
@@ -11,9 +11,9 @@ Your repository's year in review - a beautiful CLI tool to visualize your Git st
 
 </div>
 
-## ✨ Features
+## Features
 
-### 📊 Comprehensive Statistics
+### Comprehensive Statistics
 
 - **Repository Overview**
 
@@ -21,10 +21,16 @@ Your repository's year in review - a beautiful CLI tool to visualize your Git st
   - Repository age and activity timeline
   - First and last commit dates with duration
 
+- **Branch Analytics**
+
+  - Total branch count
+  - Most active branches with commit counts
+  - Last commit author per branch
+  - Comprehensive branch activity overview
+
 - **Contributor Insights**
 
   - Top contributors with commit counts
-  - Ranked leaderboard with medals 🥇🥈🥉
 
 - **Code Analysis**
 
@@ -40,7 +46,7 @@ Your repository's year in review - a beautiful CLI tool to visualize your Git st
   - Weekend warrior stats (weekend vs weekday commits)
   - Commits by day of week with visual bars
 
-- **Commit Streaks** 🔥
+- **Commit Streaks**
 
   - Current streak tracking
   - Longest streak ever with dates
@@ -53,29 +59,23 @@ Your repository's year in review - a beautiful CLI tool to visualize your Git st
   - Commit frequency analysis
   - Average commits per day and month
 
-- **Fun Facts & Achievements** 🎊
+- **Fun Facts & Achievements**
   - MVP contributor
   - Night owl detection (commits after midnight)
   - Early bird detection (commits before 8 AM)
   - Code size milestones
   - And more surprises!
 
-### 🎨 Beautiful Output
-
-- Stunning ASCII art banner with gradient colors
-- Color-coded sections for easy reading
-- Progress indicators and spinners
-- Visual bar charts for time-based data
-- Clean, organized layout
-
 ### 🔧 Flexible Options
 
 - **Year filtering**: Focus on a specific year (e.g., `--year 2025`)
+- **All branches** (default): Analyzes all branches by default; use `--current-branch-only` to analyze only the current branch
+- **Branch statistics**: View detailed branch analytics including most active branches
 - **Minimal mode**: Condensed output for quick overview
-- **No emoji mode**: Clean output without emojis
+- **No emoji mode**: Clean output without emojis (default)
 - **Verbose mode**: Debug information for troubleshooting
 
-## 🚀 Installation
+## Installation
 
 ### Global Installation (Recommended)
 
@@ -95,7 +95,7 @@ npx gitwrapped
 npm link
 ```
 
-## 📖 Usage
+## Usage
 
 ### Basic Usage
 
@@ -108,11 +108,14 @@ gitwrapped
 ### Advanced Usage
 
 ```bash
-# Filter by specific year
+# Filter by specific year (analyzes all branches by default)
 gitwrapped --year 2025
 
 # Show all-time statistics (default)
 gitwrapped --all-time
+
+# Analyze only the current branch
+gitwrapped --current-branch-only
 
 # Minimal output (condensed view)
 gitwrapped --minimal
@@ -130,7 +133,7 @@ gitwrapped --verbose
 gitwrapped --help
 ```
 
-## 🎯 Examples
+## Examples
 
 ### Example 1: Your Personal Blog
 
@@ -159,30 +162,31 @@ gitwrapped --minimal
 
 Get a quick overview without all the details.
 
-## 📊 Sample Output
+## Sample Output
 
 See the beautiful output in action! Git Wrapped provides a comprehensive, color-coded visualization of your repository statistics:
 
 ![Git Wrapped Output](screenshots/product.png)
 
 The output includes:
-- 🎨 Stunning ASCII art banner with gradient colors
-- 📊 Repository overview with key metrics
-- 📅 Timeline of your project's history
-- 👥 Contributor leaderboard
-- 💻 Code statistics and language breakdown
-- 📈 Commit frequency analysis
-- ⏰ Time-based insights (most active hours, days)
-- 🔥 Commit streaks and achievements
-- 🎉 Fun facts about your coding patterns
 
-## 🛠️ Requirements
+- Stunning ASCII art banner with gradient colors
+- Repository overview with key metrics
+- Timeline of your project's history
+- Contributor leaderboard
+- Code statistics and language breakdown
+- Commit frequency analysis
+- Time-based insights (most active hours, days)
+- Commit streaks and achievements
+- Fun facts about your coding patterns
+
+## Requirements
 
 - Node.js 14.x or higher
 - Git repository with at least one commit
 - Unix-based system (macOS, Linux) or Windows with Git Bash
 
-## 📦 Dependencies
+## Dependencies
 
 Git Wrapped uses these awesome packages:
 
@@ -194,7 +198,7 @@ Git Wrapped uses these awesome packages:
 - `asciichart` - ASCII charts
 - `commander` - CLI framework
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Feel free to:
 
@@ -204,21 +208,21 @@ Contributions are welcome! Feel free to:
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📝 License
+## License
 
 MIT © [David Amunga](https://github.com/DavidAmunga)
 
-## 🌟 Show Your Support
+## Show Your Support
 
 If you like this project, please give it a ⭐️ on [GitHub](https://github.com/DavidAmunga/gitwrapped)!
 
-## 🔗 Links
+## Links
 
 - [npm Package](https://www.npmjs.com/package/gitwrapped)
 - [GitHub Repository](https://github.com/DavidAmunga/gitwrapped)
 - [Report Issues](https://github.com/DavidAmunga/gitwrapped/issues)
 
-## 💡 Inspired By
+## Inspired By
 
 Spotify Wrapped - but for your code! 🎵 → 💻
 

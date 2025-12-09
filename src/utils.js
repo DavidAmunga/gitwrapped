@@ -133,6 +133,8 @@ export function parseCliArgs() {
     allTime: args.includes("--all-time"),
     noEmoji: args.includes("--no-emoji"),
     minimal: args.includes("--minimal"),
+    // Default to true, but allow --current-branch-only to override
+    allBranches: !args.includes("--current-branch-only"),
   };
 
   // Parse --year flag

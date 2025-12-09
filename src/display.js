@@ -23,9 +23,7 @@ export function displayBanner(repoName, options = {}) {
   const coloredArt = gradient.morning.multiline(asciiArt);
   console.log(coloredArt);
 
-  const subtitle = options.noEmoji
-    ? `Your Repository's Year in Review`
-    : `📊 Your Repository's Year in Review 📊`;
+  const subtitle = `Your Repository's Stats`;
 
   console.log(chalk.cyan.bold(subtitle.padStart(subtitle.length + 45)));
 
@@ -56,56 +54,29 @@ export function displaySection(title, emoji = "", options = {}) {
  * @param {Object} options - Display options
  */
 export function displayRepositoryOverview(stats, options = {}) {
-  displaySection("REPOSITORY OVERVIEW", "✓", options);
+  displaySection("REPOSITORY OVERVIEW", "", options);
 
-  const emoji = options.noEmoji ? "" : "📊";
   console.log(
-    chalk.white(
-      `${emoji ? emoji + " " : ""}Total Commits       ${chalk.cyan(
-        stats.numCommits
-      )}`
-    )
+    chalk.white(`Total Commits       ${chalk.cyan(stats.numCommits)}`)
   );
 
-  const branchEmoji = options.noEmoji ? "" : "🌿";
   console.log(
-    chalk.white(
-      `${branchEmoji ? branchEmoji + " " : ""}Branches            ${chalk.cyan(
-        stats.numBranches
-      )}`
-    )
+    chalk.white(`Branches            ${chalk.cyan(stats.numBranches)}`)
   );
 
-  const prEmoji = options.noEmoji ? "" : "📩";
   console.log(
-    chalk.white(
-      `${prEmoji ? prEmoji + " " : ""}Pull Requests       ${chalk.cyan(
-        stats.numPullRequests
-      )}`
-    )
+    chalk.white(`Pull Requests       ${chalk.cyan(stats.numPullRequests)}`)
   );
 
-  const contributorEmoji = options.noEmoji ? "" : "👥";
   console.log(
-    chalk.white(
-      `${
-        contributorEmoji ? contributorEmoji + " " : ""
-      }Contributors        ${chalk.cyan(stats.numContributors)}`
-    )
+    chalk.white(`Contributors        ${chalk.cyan(stats.numContributors)}`)
   );
 
   if (stats.firstCommitDate && stats.lastCommitDate) {
-    const ageEmoji = options.noEmoji ? "" : "🎂";
     const startDate = new Date(stats.firstCommitDate);
     const endDate = new Date(stats.lastCommitDate);
     const duration = formatDuration(startDate, endDate);
-    console.log(
-      chalk.white(
-        `${ageEmoji ? ageEmoji + " " : ""}Repository Age      ${chalk.cyan(
-          duration
-        )}`
-      )
-    );
+    console.log(chalk.white(`Repository Age      ${chalk.cyan(duration)}`));
   }
 }
 
@@ -116,35 +87,16 @@ export function displayRepositoryOverview(stats, options = {}) {
  * @param {Object} options - Display options
  */
 export function displayTimeline(firstCommitDate, lastCommitDate, options = {}) {
-  displaySection("TIMELINE", "📅", options);
+  displaySection("TIMELINE", "", options);
 
-  const startEmoji = options.noEmoji ? "" : "🚀";
-  console.log(
-    chalk.green(
-      `${startEmoji ? startEmoji + " " : ""}First Commit: ${formatDate(
-        firstCommitDate
-      )}`
-    )
-  );
+  console.log(chalk.green(`First Commit: ${formatDate(firstCommitDate)}`));
 
-  const endEmoji = options.noEmoji ? "" : "🏁";
-  console.log(
-    chalk.yellow(
-      `${endEmoji ? endEmoji + " " : ""}Last Commit:  ${formatDate(
-        lastCommitDate
-      )}`
-    )
-  );
+  console.log(chalk.yellow(`Last Commit:  ${formatDate(lastCommitDate)}`));
 
   const startDate = new Date(firstCommitDate);
   const endDate = new Date(lastCommitDate);
-  const durationEmoji = options.noEmoji ? "" : "⏳";
   console.log(
-    chalk.white(
-      `${
-        durationEmoji ? durationEmoji + " " : ""
-      }Duration:     ${formatDuration(startDate, endDate)}`
-    )
+    chalk.white(`Duration:     ${formatDuration(startDate, endDate)}`)
   );
 }
 
@@ -154,15 +106,13 @@ export function displayTimeline(firstCommitDate, lastCommitDate, options = {}) {
  * @param {Object} options - Display options
  */
 export function displayContributors(contributors, options = {}) {
-  displaySection("CONTRIBUTOR STATISTICS", "👥", options);
+  displaySection("CONTRIBUTOR STATISTICS", "", options);
 
   contributors.forEach(({ name, commits }, index) => {
-    const medal =
-      index === 0 ? "🥇" : index === 1 ? "🥈" : index === 2 ? "🥉" : " ";
-    const displayMedal = options.noEmoji ? `${index + 1}.` : medal;
+    const displayRank = `${index + 1}.`;
     console.log(
       chalk.white(
-        `${displayMedal} ${name.padEnd(30)} ${chalk.cyan(commits + " commits")}`
+        `${displayRank} ${name.padEnd(30)} ${chalk.cyan(commits + " commits")}`
       )
     );
   });
@@ -175,7 +125,7 @@ export function displayContributors(contributors, options = {}) {
  * @param {Object} options - Display options
  */
 export function displayCodeStats(lineStats, languageStats, options = {}) {
-  displaySection("CODE STATISTICS", "📊", options);
+  displaySection("CODE STATISTICS", "", options);
 
   console.log(
     chalk.white(
@@ -217,7 +167,7 @@ export function displayCodeStats(lineStats, languageStats, options = {}) {
  * @param {Object} options - Display options
  */
 export function displayCommitFrequency(frequencyStats, options = {}) {
-  displaySection("COMMIT FREQUENCY ANALYSIS", "📈", options);
+  displaySection("COMMIT FREQUENCY ANALYSIS", "", options);
 
   console.log(
     chalk.white(
@@ -258,7 +208,7 @@ export function displayCommitFrequency(frequencyStats, options = {}) {
  * @param {Object} options - Display options
  */
 export function displayTimeAnalysis(timeStats, options = {}) {
-  displaySection("TIME-BASED ANALYSIS", "⏰", options);
+  displaySection("TIME-BASED ANALYSIS", "", options);
 
   console.log(
     chalk.white(
@@ -296,17 +246,8 @@ export function displayTimeAnalysis(timeStats, options = {}) {
           timeStats.weekendVsWeekday.weekend)) *
       100
     ).toFixed(1);
-    const warriorEmoji = options.noEmoji
-      ? ""
-      : weekendPercentage > 30
-      ? " 💪"
-      : "";
     console.log(
-      chalk.white(
-        `  Weekend warrior: ${chalk.cyan(
-          weekendPercentage + "%"
-        )}${warriorEmoji}`
-      )
+      chalk.white(`  Weekend warrior: ${chalk.cyan(weekendPercentage + "%")}`)
     );
   }
 
@@ -327,23 +268,17 @@ export function displayTimeAnalysis(timeStats, options = {}) {
  * @param {Object} options - Display options
  */
 export function displayStreakStats(streakStats, options = {}) {
-  displaySection("COMMIT STREAK ANALYSIS", "🔥", options);
+  displaySection("COMMIT STREAK ANALYSIS", "", options);
 
-  const fireEmoji = options.noEmoji ? "" : "🔥 ";
   console.log(
     chalk.white(
-      `${fireEmoji}Current Streak:  ${chalk.cyan(
-        streakStats.currentStreak + " days"
-      )}`
+      `Current Streak:  ${chalk.cyan(streakStats.currentStreak + " days")}`
     )
   );
 
-  const trophyEmoji = options.noEmoji ? "" : "🏆 ";
   console.log(
     chalk.white(
-      `${trophyEmoji}Longest Streak:  ${chalk.cyan(
-        streakStats.longestStreak + " days"
-      )}`
+      `Longest Streak:  ${chalk.cyan(streakStats.longestStreak + " days")}`
     )
   );
 
@@ -355,13 +290,8 @@ export function displayStreakStats(streakStats, options = {}) {
     );
   }
 
-  const calendarEmoji = options.noEmoji ? "" : "📅 ";
   console.log(
-    chalk.white(
-      `${calendarEmoji}Total Active Days: ${chalk.cyan(
-        streakStats.totalActiveDays
-      )}`
-    )
+    chalk.white(`Total Active Days: ${chalk.cyan(streakStats.totalActiveDays)}`)
   );
 
   if (streakStats.streakMilestones && streakStats.streakMilestones.length > 0) {
@@ -378,7 +308,7 @@ export function displayStreakStats(streakStats, options = {}) {
  * @param {Object} options - Display options
  */
 export function displayCommitSizeStats(sizeStats, options = {}) {
-  displaySection("COMMIT SIZE STATISTICS", "📏", options);
+  displaySection("COMMIT SIZE STATISTICS", "", options);
 
   console.log(
     chalk.white(
@@ -407,7 +337,7 @@ export function displayCommitSizeStats(sizeStats, options = {}) {
 export function displayFileChurn(fileChurn, options = {}) {
   if (!fileChurn || fileChurn.length === 0) return;
 
-  displaySection("MOST CHANGED FILES", "🔄", options);
+  displaySection("MOST CHANGED FILES", "", options);
 
   fileChurn.slice(0, 10).forEach(({ file, changes }) => {
     console.log(
@@ -417,12 +347,44 @@ export function displayFileChurn(fileChurn, options = {}) {
 }
 
 /**
+ * Display branch statistics
+ * @param {Object} branchStats - Branch statistics
+ * @param {Object} options - Display options
+ */
+export function displayBranchStats(branchStats, options = {}) {
+  if (!branchStats || branchStats.totalBranches === 0) return;
+
+  displaySection("BRANCH STATISTICS", "", options);
+
+  console.log(
+    chalk.white(`Total Branches: ${chalk.cyan(branchStats.totalBranches)}`)
+  );
+
+  if (branchStats.activeBranches && branchStats.activeBranches.length > 0) {
+    console.log(chalk.white("\nMost Active Branches:"));
+    branchStats.activeBranches.slice(0, 10).forEach((branch, index) => {
+      const displayRank = `${index + 1}.`;
+      const branchDisplay = branch.name.padEnd(30);
+      const commitCount = chalk.cyan(`${branch.commits} commits`);
+
+      console.log(
+        chalk.white(`${displayRank} ${branchDisplay} ${commitCount}`)
+      );
+
+      if (!options.minimal && index < 5) {
+        console.log(chalk.gray(`   Last commit by ${branch.lastAuthor}`));
+      }
+    });
+  }
+}
+
+/**
  * Display fun facts and achievements
  * @param {Object} allStats - All statistics for generating fun facts
  * @param {Object} options - Display options
  */
 export function displayFunFacts(allStats, options = {}) {
-  displaySection("FUN FACTS & ACHIEVEMENTS", "🎉", options);
+  displaySection("FUN FACTS & ACHIEVEMENTS", "", options);
 
   const facts = [];
 
@@ -430,28 +392,20 @@ export function displayFunFacts(allStats, options = {}) {
   if (allStats.basicStats.firstCommitDate) {
     const firstDate = new Date(allStats.basicStats.firstCommitDate);
     if (firstDate.getFullYear() === options.year) {
-      facts.push(
-        `${options.noEmoji ? "★" : "🎊"} First commit of ${options.year}!`
-      );
+      facts.push(`First commit of ${options.year}!`);
     }
   }
 
   // Most productive contributor
   if (allStats.contributors && allStats.contributors.length > 0) {
     const top = allStats.contributors[0];
-    facts.push(
-      `${options.noEmoji ? "★" : "🏆"} MVP: ${top.name} with ${
-        top.commits
-      } commits`
-    );
+    facts.push(`MVP: ${top.name} with ${top.commits} commits`);
   }
 
   // Code size achievement
   if (allStats.lineStats && allStats.lineStats.totalLOC > 10000) {
     facts.push(
-      `${options.noEmoji ? "★" : "💻"} Over ${(
-        allStats.lineStats.totalLOC / 1000
-      ).toFixed(0)}K lines of code!`
+      `Over ${(allStats.lineStats.totalLOC / 1000).toFixed(0)}K lines of code!`
     );
   }
 
@@ -462,10 +416,9 @@ export function displayFunFacts(allStats, options = {}) {
     const totalCommits = allStats.basicStats.numCommits || 1;
     if (lateNight / totalCommits > 0.2) {
       facts.push(
-        `${options.noEmoji ? "★" : "🦉"} Night owl - ${(
-          (lateNight / totalCommits) *
-          100
-        ).toFixed(0)}% commits after midnight`
+        `Night owl - ${((lateNight / totalCommits) * 100).toFixed(
+          0
+        )}% commits after midnight`
       );
     }
   }
@@ -477,10 +430,9 @@ export function displayFunFacts(allStats, options = {}) {
     const totalCommits = allStats.basicStats.numCommits || 1;
     if (earlyMorning / totalCommits > 0.15) {
       facts.push(
-        `${options.noEmoji ? "★" : "🌅"} Early bird - ${(
-          (earlyMorning / totalCommits) *
-          100
-        ).toFixed(0)}% commits before 8 AM`
+        `Early bird - ${((earlyMorning / totalCommits) * 100).toFixed(
+          0
+        )}% commits before 8 AM`
       );
     }
   }
@@ -509,6 +461,6 @@ export function displayFooter() {
   console.log();
   console.log(chalk.gray("═".repeat(60)));
   console.log(chalk.cyan.bold("Thank you for using Git Wrapped!".padStart(40)));
-  console.log(chalk.gray("Made with ❤️  for developers".padStart(42)));
+  console.log(chalk.gray("Made for developers".padStart(38)));
   console.log();
 }

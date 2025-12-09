@@ -10,6 +10,7 @@ import {
   getCommitSizeStats,
   getLanguageStats,
   getFileChurnStats,
+  getBranchStats,
 } from "./src/stats.js";
 import { getStreakStats } from "./src/streaks.js";
 import {
@@ -23,6 +24,7 @@ import {
   displayStreakStats,
   displayCommitSizeStats,
   displayFileChurn,
+  displayBranchStats,
   displayFunFacts,
   displayFooter,
   createSpinner,
@@ -80,6 +82,9 @@ async function main() {
 
       // File churn stats
       allStats.fileChurn = getFileChurnStats(options, verbose);
+
+      // Branch stats
+      allStats.branchStats = getBranchStats(options, verbose);
 
       // Streak stats
       allStats.streakStats = getStreakStats(options, verbose);
@@ -167,6 +172,11 @@ function displayResults(allStats, options) {
     displayFileChurn(allStats.fileChurn, options);
   }
 
+  // Branch Statistics
+  if (allStats.branchStats && allStats.branchStats.totalBranches > 0) {
+    displayBranchStats(allStats.branchStats, options);
+  }
+
   // Fun Facts
   if (!options.minimal) {
     displayFunFacts(allStats, options);
@@ -181,7 +191,7 @@ function displayResults(allStats, options) {
  */
 function displayHelp() {
   console.log(
-    chalk.cyan.bold("\n🎉 Git Wrapped - Your Repository's Year in Review\n")
+    chalk.cyan.bold("\nGit Wrapped - Your Repository's Year in Review\n")
   );
   console.log(chalk.white("Usage: gitwrapped [options]\n"));
   console.log(chalk.white("Options:"));
@@ -194,6 +204,11 @@ function displayHelp() {
     chalk.white("  --all-time              Show all-time statistics (default)")
   );
   console.log(
+    chalk.white(
+      "  --current-branch-only   Analyze only the current branch (default: all)"
+    )
+  );
+  console.log(
     chalk.white("  --no-emoji              Disable emojis in output")
   );
   console.log(chalk.white("  --minimal               Show condensed output"));
@@ -201,19 +216,20 @@ function displayHelp() {
   console.log(chalk.white("  --help, -h              Show this help message"));
   console.log(chalk.white("\nExamples:"));
   console.log(
-    chalk.gray("  gitwrapped                          # Show all-time stats")
+    chalk.gray("  gitwrapped                          # All branches (default)")
   );
   console.log(
-    chalk.gray("  gitwrapped --year 2025              # Show stats for 2025")
+    chalk.gray(
+      "  gitwrapped --year 2025              # 2025 stats, all branches"
+    )
+  );
+  console.log(
+    chalk.gray("  gitwrapped --current-branch-only    # Only current branch")
   );
   console.log(
     chalk.gray("  gitwrapped --minimal                # Condensed output")
   );
-  console.log(
-    chalk.gray(
-      "  gitwrapped --year 2024 --no-emoji   # 2024 stats without emojis"
-    )
-  );
+  console.log(chalk.gray("  gitwrapped --year 2024 --no-emoji"));
   console.log();
 }
 

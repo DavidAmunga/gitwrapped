@@ -26,14 +26,15 @@ export function getCommitDetails(commitHash, verbose = false) {
  */
 export function getBasicStats(options = {}, verbose = false) {
   const dateFilter = getDateFilter(options);
+  const branchFilter = options.allBranches ? "--all" : "";
 
   // Get first and last commits
   const firstCommitHash = execCommand(
-    `git rev-list --max-parents=0 HEAD ${dateFilter}`,
+    `git rev-list --max-parents=0 HEAD ${branchFilter} ${dateFilter}`,
     verbose
   );
   const lastCommitHash = execCommand(
-    `git rev-list -n 1 HEAD ${dateFilter}`,
+    `git rev-list -n 1 HEAD ${branchFilter} ${dateFilter}`,
     verbose
   );
 
@@ -58,7 +59,7 @@ export function getBasicStats(options = {}, verbose = false) {
   }
 
   const numCommits = execCommand(
-    `git rev-list --count HEAD ${dateFilter}`,
+    `git rev-list --count HEAD ${branchFilter} ${dateFilter}`,
     verbose
   );
 
@@ -66,12 +67,12 @@ export function getBasicStats(options = {}, verbose = false) {
   const numBranches = execCommand("git branch -a | wc -l", verbose);
 
   const numPullRequests = execCommand(
-    `git log --oneline --grep="Merge pull request" ${dateFilter} | wc -l`,
+    `git log --oneline --grep="Merge pull request" ${branchFilter} ${dateFilter} | wc -l`,
     verbose
   );
 
   const numContributors = execCommand(
-    `git shortlog -sn ${dateFilter} | wc -l`,
+    `git shortlog -sn ${branchFilter} ${dateFilter} | wc -l`,
     verbose
   );
 
@@ -137,7 +138,11 @@ export function getLineStats(verbose = false) {
  */
 export function getContributorStats(options = {}, verbose = false) {
   const dateFilter = getDateFilter(options);
-  const output = execCommand(`git shortlog -sn --all ${dateFilter}`, verbose);
+  const branchFilter = options.allBranches ? "--all" : "";
+  const output = execCommand(
+    `git shortlog -sn ${branchFilter} ${dateFilter}`,
+    verbose
+  );
 
   if (!output) return [];
 
@@ -158,8 +163,9 @@ export function getContributorStats(options = {}, verbose = false) {
  */
 export function getTimeBasedStats(options = {}, verbose = false) {
   const dateFilter = getDateFilter(options);
+  const branchFilter = options.allBranches ? "--all" : "";
   const output = execCommand(
-    `git log --format="%H|%ai" ${dateFilter}`,
+    `git log --format="%H|%ai" ${branchFilter} ${dateFilter}`,
     verbose
   );
 
@@ -238,7 +244,11 @@ export function getTimeBasedStats(options = {}, verbose = false) {
  */
 export function getCommitFrequencyStats(options = {}, verbose = false) {
   const dateFilter = getDateFilter(options);
-  const output = execCommand(`git log --format="%ai" ${dateFilter}`, verbose);
+  const branchFilter = options.allBranches ? "--all" : "";
+  const output = execCommand(
+    `git log --format="%ai" ${branchFilter} ${dateFilter}`,
+    verbose
+  );
 
   if (!output) {
     return {
@@ -317,7 +327,11 @@ export function getCommitFrequencyStats(options = {}, verbose = false) {
  */
 export function getCommitSizeStats(options = {}, verbose = false) {
   const dateFilter = getDateFilter(options);
-  const output = execCommand(`git log --stat --oneline ${dateFilter}`, verbose);
+  const branchFilter = options.allBranches ? "--all" : "";
+  const output = execCommand(
+    `git log --stat --oneline ${branchFilter} ${dateFilter}`,
+    verbose
+  );
 
   if (!output) {
     return { avgFilesChanged: 0, avgInsertions: 0, avgDeletions: 0 };
@@ -398,8 +412,9 @@ export function getLanguageStats(verbose = false) {
  */
 export function getFileChurnStats(options = {}, verbose = false) {
   const dateFilter = getDateFilter(options);
+  const branchFilter = options.allBranches ? "--all" : "";
   const output = execCommand(
-    `git log --name-only --format="" ${dateFilter} | sort | uniq -c | sort -rn | head -20`,
+    `git log --name-only --format="" ${branchFilter} ${dateFilter} | sort | uniq -c | sort -rn | head -20`,
     verbose
   );
 
@@ -419,4 +434,80 @@ export function getFileChurnStats(options = {}, verbose = false) {
       return null;
     })
     .filter(Boolean);
+}
+
+/**
+ * Get branch statistics
+ * @param {Object} options - Filter options (year, since, until)
+ * @param {boolean} verbose - Whether to log debug info
+ * @returns {Object} - Branch statistics
+ */
+export function getBranchStats(options = {}, verbose = false) {
+  const dateFilter = getDateFilter(options);
+  
+  // Get all branches (local and remote)
+  const branchesOutput = execCommand(
+    "git branch -a --format='%(refname:short)|%(committerdate:iso)|%(authorname)'",
+    verbose
+  );
+
+  if (!branchesOutput) {
+    return {
+      branches: [],
+      totalBranches: 0,
+      activeBranches: [],
+    };
+  }
+
+  // Get commit count per branch
+  const branchLines = branchesOutput.split("\n").filter((line) => line.trim());
+  const branches = [];
+
+  for (const line of branchLines) {
+    const [branchName, lastCommitDate, lastAuthor] = line.split("|");
+    
+    // Skip remote HEAD references
+    if (branchName.includes("HEAD ->")) continue;
+    
+    // Clean up remote branch names
+    const displayName = branchName.replace("origin/", "");
+    
+    // Get commit count for this branch
+    const commitCount = execCommand(
+      `git rev-list --count ${branchName} ${dateFilter} 2>/dev/null || echo 0`,
+      verbose
+    );
+
+    if (commitCount && parseInt(commitCount) > 0) {
+      branches.push({
+        name: displayName,
+        commits: parseInt(commitCount),
+        lastCommitDate: lastCommitDate,
+        lastAuthor: lastAuthor || "Unknown",
+        isRemote: branchName.includes("origin/"),
+      });
+    }
+  }
+
+  // Remove duplicates (local and remote versions of same branch)
+  const uniqueBranches = [];
+  const seenNames = new Set();
+
+  branches
+    .sort((a, b) => b.commits - a.commits)
+    .forEach((branch) => {
+      if (!seenNames.has(branch.name)) {
+        seenNames.add(branch.name);
+        uniqueBranches.push(branch);
+      }
+    });
+
+  // Get most active branches (with date filter)
+  const activeBranches = uniqueBranches.slice(0, 10);
+
+  return {
+    branches: uniqueBranches,
+    totalBranches: uniqueBranches.length,
+    activeBranches,
+  };
 }

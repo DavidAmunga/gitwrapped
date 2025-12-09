@@ -8,8 +8,9 @@ import { execCommand, getDateFilter } from "./utils.js";
  */
 export function getStreakStats(options = {}, verbose = false) {
   const dateFilter = getDateFilter(options);
+  const branchFilter = options.allBranches ? '--all' : '';
   const output = execCommand(
-    `git log --format="%ai" ${dateFilter} | cut -d' ' -f1 | sort -u`,
+    `git log --format="%ai" ${branchFilter} ${dateFilter} | cut -d' ' -f1 | sort -u`,
     verbose
   );
 
@@ -121,10 +122,10 @@ export function getStreakStats(options = {}, verbose = false) {
 
   // Determine streak milestones
   const streakMilestones = [];
-  if (longestStreak >= 7) streakMilestones.push("🔥 Week Warrior");
-  if (longestStreak >= 30) streakMilestones.push("💪 Month Master");
-  if (longestStreak >= 100) streakMilestones.push("🏆 Century Club");
-  if (longestStreak >= 365) streakMilestones.push("🌟 Year Legend");
+  if (longestStreak >= 7) streakMilestones.push("Week Warrior");
+  if (longestStreak >= 30) streakMilestones.push("Month Master");
+  if (longestStreak >= 100) streakMilestones.push("Century Club");
+  if (longestStreak >= 365) streakMilestones.push("Year Legend");
 
   return {
     currentStreak,
@@ -144,8 +145,9 @@ export function getStreakStats(options = {}, verbose = false) {
  */
 export function generateStreakCalendar(options = {}, verbose = false) {
   const dateFilter = getDateFilter(options);
+  const branchFilter = options.allBranches ? '--all' : '';
   const output = execCommand(
-    `git log --format="%ai" ${dateFilter} | cut -d' ' -f1`,
+    `git log --format="%ai" ${branchFilter} ${dateFilter} | cut -d' ' -f1`,
     verbose
   );
 
